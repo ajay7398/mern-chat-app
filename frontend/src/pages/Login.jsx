@@ -1,7 +1,7 @@
 import React, { Component, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { loginUser } from "../api/userAPI.JS";
+import { loginUser } from "../api/userAPI.js";
 import { UserContext } from "../context/UserContext";
 import { getUserChats } from "../api/chatAPI";
 function Login() {

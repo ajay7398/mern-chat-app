@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { signupUser } from '../api/userAPI.JS';
+import { signupUser } from '../api/userAPI.js';
 import { UserContext } from '../context/UserContext';
 
 function Signup() {

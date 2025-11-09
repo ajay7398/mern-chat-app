@@ -1,5 +1,5 @@
 import React, { use, useContext, useRef } from "react";
-import { getUserMessages } from "../api/messageAPI.JS";
+import { getUserMessages } from "../api/messageAPI.js";
 import { UserContext } from "../context/UserContext.jsx";
 import { useEffect } from "react";
 import { socket } from "../context/UserContext.jsx";

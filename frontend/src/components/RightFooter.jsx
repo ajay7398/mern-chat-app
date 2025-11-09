@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { LuSendHorizontal } from "react-icons/lu";
 import { UserContext } from "../context/UserContext";
-import { sendMessage } from "../api/messageAPI.JS";
+import { sendMessage } from "../api/messageAPI.js";
 import { socket } from "../context/UserContext.jsx";
 function RightFooter() {
   const { selectedChat,user,messages } = useContext(UserContext);

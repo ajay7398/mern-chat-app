@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { IoMdLogOut } from "react-icons/io";
-import { logoutUser, searchUser } from "../api/userAPI.JS";
+import { logoutUser, searchUser } from "../api/userAPI.js";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { createOrGetChat, getUserChats } from "../api/chatAPI";
