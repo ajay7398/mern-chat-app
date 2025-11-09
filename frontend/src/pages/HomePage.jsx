@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
-import RightHeader from "../components/rightHeader";
-import RightFooter from "../components/RightFooter";
-import LeftHeader from "../components/LeftHeader";
-import Chats from "../components/Chats";
-import Message from "../components/Message";
-import { UserContext } from "../context/UserContext";
+import RightHeader from "../components/rightHeader.jsx";
+import RightFooter from "../components/RightFooter.jsx";
+import LeftHeader from "../components/LeftHeader.jsx";
+import Chats from "../components/Chats.jsx";
+import Message from "../components/Message.jsx";
+import { UserContext } from "../context/UserContext.jsx";
 
 function HomePage() {
   const { selectedChat } = useContext(UserContext);
