@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import RightHeader from "../components/rightHeader.jsx";
+import RightHeader from "../components/RightHeader.jsx";
 import RightFooter from "../components/RightFooter.jsx";
 import LeftHeader from "../components/LeftHeader.jsx";
 import Chats from "../components/Chats.jsx";
