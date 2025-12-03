@@ -3,9 +3,9 @@ import { UserContext } from "../context/UserContext";
 import { createOrGetChat } from "../api/chatAPI";
 
 function UserList() {
-  const { chats,user, setSelectedChat } = useContext(UserContext);
+  const { chats,user, setSelectedChat,onlineUsers } = useContext(UserContext);
   const [match, setMatch] = useState(null);
-
+console.log("Online Users in UserList:", onlineUsers);
   const onSelect = async (otherUserId) => {
     try {
       // Create or get existing chat from backend
@@ -34,9 +34,11 @@ function UserList() {
           <div
             key={other._id || index}
             onClick={() => onSelect(other._id)}
-            className={`cursor-pointer min-w-full p-3 ${match === other._id?"ring ring-green-300":"bg-slate-700"}`}
+            className={`flex items-center relative cursor-pointer min-w-full p-3 ${match === other._id?"ring ring-green-300":"bg-slate-700"}`}
           >
-            {other.email}
+            <img className="w-5 h-5 rounded-full mr-2" src={other.profilePic}/>
+           <p>{other.email}</p>
+           <h3  className={`w-2 h-2 absolute right-5 bg-green-500 rounded-full ${onlineUsers.includes(other._id)?'block':'hidden'}`}></h3>
           </div>
         );
       })

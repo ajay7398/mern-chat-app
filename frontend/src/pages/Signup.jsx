@@ -3,9 +3,9 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { signupUser } from '../api/userAPI.js';
 import { UserContext } from '../context/UserContext.jsx';
-
+import { socket } from '../context/UserContext.jsx';
 function Signup() {
-  const {setUser}=useContext(UserContext);
+  const {setUser,user}=useContext(UserContext);
   const navigate = useNavigate();
     const [username,setUsername]=useState("");
     const [email,setEmail]=useState("");
@@ -15,6 +15,7 @@ function Signup() {
 e.preventDefault();
 signupUser(username,email,password).then((data)=>{
   setUser(data.user); // ✅ set the user in global context
+  socket.emit("userOnline", data.user._id);
       navigate("/"); // ✅ now ProtectedRoute will allow access instantly
  
 }).catch((error)=>{

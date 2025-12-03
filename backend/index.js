@@ -10,6 +10,8 @@ dotenv.config();
 import userRouter from './routes/userRouter.js';
 import chatRouter from './routes/chatRouter.js';
 import messageRouter from './routes/messageRouter.js';
+import Message from './models/message.model.js';
+import Chat from './models/chat.model.js';
 // Middleware
 app.use(cors({
   origin:process.env.CLIENT_URL,  // your React frontend port
@@ -38,9 +40,22 @@ const io=new Server(server,{
   }
 });
 
+const onlineUsers = new Map(); 
+
 // ✅ Handle connection
 io.on("connection", (socket) => {
-  console.log("🟢 New client connected:", socket.id);
+ 
+ // When user goes online
+  socket.on("userOnline", (userId) => {
+    onlineUsers.set(userId, socket.id);
+    // Send updated list to all users
+    io.emit("onlineUsers", Array.from(onlineUsers.keys()));
+  });
+
+  socket.on("userOffline", (userId) => {
+  onlineUsers.delete(userId);
+  io.emit("onlineUsers", Array.from(onlineUsers.keys()));
+});
 
   // Example: user joins a chat room
   socket.on("joinChat", (chatId) => {
@@ -49,13 +64,25 @@ io.on("connection", (socket) => {
   });
 
   // Example: message sent
-  socket.on("sendMessage", (messageData) => {
+  socket.on("sendMessage", async(messageData) => {
     const { chatId, message } = messageData;
-    io.to(chatId).emit("receiveMessage", message);
+       await Message.create({
+          senderId: message.senderId._id,
+          chatId,
+          text: message.text,
+        });
+        await Chat.findByIdAndUpdate(chatId, { lastMessage: message.text, updatedAt: Date.now() });
+    io.to(chatId).emit("message-saved", { chatId });
+    // io.to(chatId).emit("receiveMessage", newMessage.text);
   });
 
   socket.on("disconnect", () => {
-    console.log("🔴 Client disconnected:", socket.id);
+    for (let [userId, socketId] of onlineUsers.entries()) {
+      if (socketId === socket.id) {
+        onlineUsers.delete(userId);
+        break;
+      }};
+        io.emit("onlineUsers", Array.from(onlineUsers.keys()));
   });
 });
 

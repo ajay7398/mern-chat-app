@@ -6,14 +6,37 @@ import { socket } from "../context/UserContext.jsx";
 function Message() {
   const { selectedChat, setMessages, user, messages } = useContext(UserContext);
   const messageEndRef = useRef(null);
-  useEffect(() => {
-    getUserMessages(selectedChat?._id)
+  useEffect(()=>{
+ getUserMessages(selectedChat?._id)
       .then((res) => {
         setMessages(res);
       })
       .catch((err) => {
         console.error("Error fetching messages:", err);
       });
+  },[selectedChat])
+  useEffect(() => {
+     socket.on("message-saved", ({ chatId }) => {
+    if (chatId === selectedChat?._id) {
+      getUserMessages(chatId)
+      .then((res) => {
+        setMessages(res);
+      })
+      .catch((err) => {
+        console.error("Error fetching messages:", err);
+      });
+    }
+  });
+   return () => {
+    socket.off("message-saved");
+  };
+    // getUserMessages(selectedChat?._id)
+    //   .then((res) => {
+    //     setMessages(res);
+    //   })
+    //   .catch((err) => {
+    //     console.error("Error fetching messages:", err);
+    //   });
   }, [selectedChat]);
 
   useEffect(() => {

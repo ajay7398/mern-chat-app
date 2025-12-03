@@ -4,8 +4,9 @@ import { useState } from "react";
 import { loginUser } from "../api/userAPI.js";
 import { UserContext } from "../context/UserContext.jsx";
 import { getUserChats } from "../api/chatAPI.js";
+import { socket } from "../context/UserContext.jsx";
 function Login() {
-  const { setUser,setChats } = useContext(UserContext);
+  const { setUser,setChats,user } = useContext(UserContext);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,7 +15,7 @@ function Login() {
     loginUser(email, password)
       .then(async(data) => {
         setUser(data.user); // ✅ set the user in global context
-        console.log("Login successful:", data.user);
+     socket.emit("userOnline", data.user._id);
           setTimeout(async () => {
         const chats = await getUserChats();
         setChats(chats);

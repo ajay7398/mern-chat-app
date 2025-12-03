@@ -23,9 +23,10 @@ export const signupUser = async (username, email, password) => {
   }
 };
 
-export const logoutUser = async (setUser,navigate,setSelectedChat) => {
+export const logoutUser = async (id,setUser,navigate,setSelectedChat,socket) => {
   try {
     await api.post("/api/user/logout");
+  socket.emit("userOffline",id);
     setUser(null);
 navigate('/login');
 setSelectedChat(null);
@@ -57,5 +58,23 @@ export const searchUser = async (userEmail) => {
 
     console.error("User search failed:", error.response?.data || error.message);
     return { success: false, message: "Server error" };
+  }
+};
+
+export const updateProfilePicture = async (imageFile) => {
+  try {
+   
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    const response = await api.put("/api/user/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error("Profile picture update failed:", error.response?.data || error.message);
+    throw error;
   }
 };

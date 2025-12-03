@@ -1,6 +1,8 @@
 import User from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import cloudinary from '../config/cloudinary.js';
+import fs from 'fs';
 const isProduction = process.env.NODE_ENV === "production";
 export const signup = async (req, res) => {
   try {
@@ -25,6 +27,7 @@ export const signup = async (req, res) => {
       name: username,
       email:trimmedEmail,
       password: hashedPassword,
+      
     });
     await newUser.save();
 
@@ -33,7 +36,8 @@ export const signup = async (req, res) => {
       {
         _id: newUser._id,
       name: newUser.name,
-      image:newUser.profilePic || ""
+      image:newUser.profilePic || "",
+      email:newUser.email
       },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
@@ -78,7 +82,8 @@ export const login = async (req, res) => {
       {
         _id: user._id,
         name: user.name,
-        image:user.profilePic || ""
+        image:user.profilePic || "",
+        email:user.email
         },
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
@@ -89,13 +94,15 @@ export const login = async (req, res) => {
       secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
     });
-console.log("User logged in:", user);
+
     res.status(200).json({ message: "Login successful", user });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
 export const Logout=(req,res)=>{
   res.clearCookie("token", {
     httpOnly: true,
@@ -130,3 +137,36 @@ console.log("usermail:",userEmail)
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+export const updateProfile=async(req,res)=>{
+
+  try {
+   
+  if(!req.file){
+    return res.status(400).json({message:"no file uploaded"});
+  }
+  const profilePicPath=req.file.path; // local path
+  
+   // upload to cloudinary
+    const uploadResult = await cloudinary.uploader.upload(profilePicPath, {
+      folder: "chat-app/profilePictures",
+    });
+    // delete local file after upload
+    fs.unlink(profilePicPath, () => {});
+  User.findByIdAndUpdate(
+    req.user._id,
+    { profilePic: uploadResult.secure_url },
+    { new: true }
+  )
+    .then((updatedUser) => {
+      res.status(200).json({ message: "Profile updated", user: updatedUser });
+    })
+    .catch((err) => {
+      res.status(500).json({ message: "Error updating profile" });
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+}

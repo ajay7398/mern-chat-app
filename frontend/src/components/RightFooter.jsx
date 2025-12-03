@@ -9,13 +9,13 @@ function RightFooter() {
   const [message, setMessage] = React.useState("");
   const onSendMessage = (id,message) => {
 
-    sendMessage(id, message)
-      .then((res) => {
-        console.log("Message sent:", res);
-      })
-      .catch((err) => {
-        console.error("Error sending message:", err);
-      });
+    // sendMessage(id, message)
+    //   .then((res) => {
+    //     console.log("Message sent:", res);
+    //   })
+    //   .catch((err) => {
+    //     console.error("Error sending message:", err);
+    //   });
     socket.emit("sendMessage", { chatId: id, message: { text: message,senderId:{_id:user._id} } });
     setMessage("");
   };

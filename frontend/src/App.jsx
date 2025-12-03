@@ -6,17 +6,20 @@ import Signup from './pages/Signup'
 import HomePage from './pages/HomePage'
 import ProtectedRoute from './components/ProtectedRoute'
 import PublicRoute from './components/PublicRoute'
-import React, { useEffect } from "react";
-import { socket } from './context/UserContext.jsx';
+import React, { useContext, useEffect } from "react";
+import { socket, UserContext } from './context/UserContext.jsx';
+import Profile from './pages/Profile.jsx'
 function App() {
- useEffect(() => {
-    // Listen when connected
-    socket.on("connect", () => {
-      console.log("Connected to socket:", socket.id);
-    });
 
-    
-  }, []);
+  const {setOnlineUsers,user,onlineUsers}=useContext(UserContext);
+ useEffect(() => {
+      socket.on("onlineUsers", (users) => {
+    setOnlineUsers(users); // store in state
+  });
+  if (user?._id) {
+    socket.emit("userOnline", user._id);
+  }
+  }, [user]);
   return (
     <>
      <Routes>
@@ -43,6 +46,14 @@ function App() {
         element={
           <ProtectedRoute>
             <HomePage/>
+          </ProtectedRoute>
+        }
+      />
+       <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile/>
           </ProtectedRoute>
         }
       />

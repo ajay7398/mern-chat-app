@@ -12,7 +12,7 @@ export const UserProvider = ({ children }) => {
   const [selectedChat, setSelectedChat] = useState(null);
   const [chats, setChats] = useState([]);
   const [messages, setMessages] = useState([]);
-
+const [onlineUsers, setOnlineUsers] = useState([]);
   useEffect(() => {
 
     const verifyAndFetch = async () => {
@@ -50,6 +50,8 @@ export const UserProvider = ({ children }) => {
         setChats,
         messages,
         setMessages,
+        onlineUsers,
+        setOnlineUsers,
       }}
     >
       {children}

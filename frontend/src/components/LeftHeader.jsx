@@ -1,49 +1,60 @@
 import React, { useContext, useState } from "react";
-import { IoMdLogOut } from "react-icons/io";
 import { logoutUser, searchUser } from "../api/userAPI.js";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
-import { createOrGetChat, getUserChats } from "../api/chatAPI";
-import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { Button, Popover, Space } from "antd";
+import { SlOptionsVertical } from "react-icons/sl";
+import { MdOutlineLogout } from "react-icons/md";
+import { CgProfile } from "react-icons/cg";
+import { socket } from "../context/UserContext.jsx";
+import { MdOutlineAddComment } from "react-icons/md";
+import NewChat from "./NewChat.jsx";
 
 function LeftHeader() {
-  const { setUser,setChats,setSelectedChat} = useContext(UserContext);
+  const { setUser, setChats, setSelectedChat, user } = useContext(UserContext);
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
+  const [showNewChat, setShowNewChat] = useState(false);
+const [search, setSearch] = useState("");
+  const content = (
+    <div className="flex flex-col gap-1 text-white">
+      <div
+        onClick={() => navigate("/profile")}
+        className="cursor-pointer bg-gray-400 px-2 py-1 rounded flex justify-start items-center"
+      >
+        <CgProfile className="text-black" />
+        <p className="cursor-pointer bg-gray-400 px-2 py-1 rounded">Profile</p>
+      </div>
 
-  const handleKeyDown = async (e) => {
-    if (e.key === "Enter" && search.trim() !== "") {
-      try {
-         searchUser(search.trim()).then(async(result) => {
-            if (!result.success) {
-      toast.error(result.message || "User not found");
-      setSearch("");
-      return;
-    }
-          await createOrGetChat(result.result._id);
-          const chatData=await getUserChats()
-          setChats(chatData);
-          setSearch("");
-        });
-       
-        // You can store result in context or a state
-        // Example: setSearchResults(result);
-      } catch (error) {
-        console.error("Error searching users:", error);
-      }
-    }
-  };
+      <div className="cursor-pointer bg-gray-400 px-2 py-1 rounded flex justify-center items-center gap-1">
+        <MdOutlineLogout className="text-black" />
+        <p
+          onClick={() =>
+            logoutUser(user?._id, setUser, navigate, setSelectedChat, socket)
+          }
+        >
+          Logout
+        </p>
+      </div>
+    </div>
+  );
 
+  
   return (
-    <div className="w-full bg-gray-800 ">
+    <div className="w-full bg-gray-800">
+      <NewChat showNewChat={showNewChat} setShowNewChat={setShowNewChat}/>
       <div className="w-full flex justify-between items-center p-3">
-        <h1 className="text-white p-3 font-bold">Chats</h1>
-        <IoMdLogOut
-          className="text-2xl"
-          onClick={() => logoutUser(setUser, navigate,setSelectedChat)}
-        />
+        <h1 className="text-white font-bold">Chats</h1>
+        <div className="flex gap-2 items-center">
+          <MdOutlineAddComment className="w-7 h-7" onClick={()=>setShowNewChat(!showNewChat)} />
+          <Space wrap>
+            <Popover content={content} trigger="click">
+              <Button>
+                <SlOptionsVertical />
+              </Button>
+            </Popover>
+          </Space>
+        </div>
       </div>
 
       <div className="w-full flex p-1">
@@ -51,13 +62,13 @@ function LeftHeader() {
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className="text-white mx-5 flex-1 p-1 border-b-2 rounded border-b-green-600 bg-slate-500 outline-none"
-          placeholder="Search or Start new chat"
+         
+          className="text-white mx-5 flex-1 p-1 border-b-2 border-b-green-600 bg-slate-500 outline-none rounded"
+          placeholder="Search chat"
         />
-
       </div>
-       <ToastContainer position="top-center" autoClose={1000} />
+
+     
     </div>
   );
 }
