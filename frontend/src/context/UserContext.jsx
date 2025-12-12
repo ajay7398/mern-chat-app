@@ -13,8 +13,9 @@ export const UserProvider = ({ children }) => {
   const [chats, setChats] = useState([]);
   const [messages, setMessages] = useState([]);
 const [onlineUsers, setOnlineUsers] = useState([]);
-  useEffect(() => {
+const [filteredChats, setFilteredChats] = useState([]);
 
+  useEffect(() => {
     const verifyAndFetch = async () => {
       try {
         const res = await api.get("/api/user/me", {
@@ -37,6 +38,7 @@ const [onlineUsers, setOnlineUsers] = useState([]);
     verifyAndFetch();
   }, []); // run once on mount
 
+
   
   return (
     <UserContext.Provider
@@ -52,6 +54,8 @@ const [onlineUsers, setOnlineUsers] = useState([]);
         setMessages,
         onlineUsers,
         setOnlineUsers,
+        filteredChats,
+        setFilteredChats
       }}
     >
       {children}

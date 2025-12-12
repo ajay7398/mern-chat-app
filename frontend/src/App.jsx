@@ -11,15 +11,16 @@ import { socket, UserContext } from './context/UserContext.jsx';
 import Profile from './pages/Profile.jsx'
 function App() {
 
-  const {setOnlineUsers,user,onlineUsers}=useContext(UserContext);
+  const {setOnlineUsers,user,selectedChat}=useContext(UserContext);
  useEffect(() => {
+   if (user?._id) {
+    socket.emit("userOnline", user._id);
+  }
       socket.on("onlineUsers", (users) => {
     setOnlineUsers(users); // store in state
   });
-  if (user?._id) {
-    socket.emit("userOnline", user._id);
-  }
-  }, [user]);
+ 
+  }, [user,selectedChat]);
   return (
     <>
      <Routes>

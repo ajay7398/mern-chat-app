@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { use, useContext, useState } from "react";
 import { logoutUser, searchUser } from "../api/userAPI.js";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
@@ -10,11 +10,14 @@ import { CgProfile } from "react-icons/cg";
 import { socket } from "../context/UserContext.jsx";
 import { MdOutlineAddComment } from "react-icons/md";
 import NewChat from "./NewChat.jsx";
+import { useEffect } from "react";
 
 function LeftHeader() {
-  const { setUser, setChats, setSelectedChat, user } = useContext(UserContext);
+  const { setUser, setChats, setSelectedChat, user,chats, setFilteredChats } = useContext(UserContext);
   const navigate = useNavigate();
   const [showNewChat, setShowNewChat] = useState(false);
+
+
 const [search, setSearch] = useState("");
   const content = (
     <div className="flex flex-col gap-1 text-white">
@@ -39,7 +42,28 @@ const [search, setSearch] = useState("");
     </div>
   );
 
+   const searchUsers = (text) => {
+  setSearch(text);
+
+  if (!text.trim()) {
+    setFilteredChats(chats);  // return all chats
+    return;
+  }
+
+  const results = chats.filter((chat) => {
+    const other = chat.members.find((m) => m._id !== user?._id);
+    return other?.email.toLowerCase().includes(text.toLowerCase());
+  });
+
+  setFilteredChats(results);
+};
+
   
+useEffect(() => {
+  searchUsers(search);
+}, [search, chats]);
+
+   
   return (
     <div className="w-full bg-gray-800">
       <NewChat showNewChat={showNewChat} setShowNewChat={setShowNewChat}/>
@@ -61,7 +85,7 @@ const [search, setSearch] = useState("");
         <input
           type="text"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) =>setSearch(e.target.value)}
          
           className="text-white mx-5 flex-1 p-1 border-b-2 border-b-green-600 bg-slate-500 outline-none rounded"
           placeholder="Search chat"
