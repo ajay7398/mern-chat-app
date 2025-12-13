@@ -10,6 +10,9 @@
 /frontend/dist
 /frontend/build
 
+#virtual environment
+/sentiment-api/myenv
+
 # Logs
 /logs
 *.log
