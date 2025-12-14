@@ -30,13 +30,7 @@ function Message() {
    return () => {
     socket.off("message-saved");
   };
-    // getUserMessages(selectedChat?._id)
-    //   .then((res) => {
-    //     setMessages(res);
-    //   })
-    //   .catch((err) => {
-    //     console.error("Error fetching messages:", err);
-    //   });
+  
   }, [selectedChat]);
 
   useEffect(() => {
@@ -77,7 +71,7 @@ function Message() {
               >
                 <div> 
                    <h1 className="text-gray-200">{msg.text}</h1>
-                <p className={`inline-block text-[11px] px-[8px] py-[3px] rounded-md bg-blue-700 text-white `}>{`${msg?.sentiment!=undefined && msg.sentiment}`}</p>
+                <p className={`inline-block text-[11px] px-[8px] py-[3px] rounded-md text-white ${msg?.sentiment=='POSITIVE'?'bg-blue-700':'bg-red-700'} `}>{`${msg?.sentiment!=undefined && msg.sentiment}`}</p>
                  
                   </div>
                
