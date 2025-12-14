@@ -20,6 +20,12 @@ const messageSchema = new mongoose.Schema(
       type: String, // for image messages
       default: "https://cdn-icons-png.flaticon.com/128/3177/3177440.png",
     },
+     sentiment: {
+    type: String,
+    enum: ["POSITIVE", "NEGATIVE", "NEUTRAL"]
+  },
+
+  isToxic: Boolean
   },
   { timestamps: true }
 );

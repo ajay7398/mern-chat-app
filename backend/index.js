@@ -2,6 +2,7 @@ import express from 'express';
 import cookieParser from "cookie-parser";
 import http from 'http';
 import { Server } from 'socket.io';
+import axios from 'axios';
 import cors from 'cors';
 import connectDB from './config/DB.js';
 const app = express();
@@ -66,10 +67,19 @@ io.on("connection", (socket) => {
   // Example: message sent
   socket.on("sendMessage", async(messageData) => {
     const { chatId, message } = messageData;
+
+  // 1️⃣ Call ML API
+  const response = await axios.post("https://ajay-dev-pro-sentiment-model.hf.space/predict", {
+    text: message.text
+  });
+  const sentiment = response.data.label;
+
+
        await Message.create({
           senderId: message.senderId._id,
           chatId,
           text: message.text,
+          sentiment
         });
         await Chat.findByIdAndUpdate(chatId, { lastMessage: message.text, updatedAt: Date.now() });
     io.to(chatId).emit("message-saved", { chatId });

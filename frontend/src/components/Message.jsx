@@ -75,8 +75,13 @@ function Message() {
                     : "bg-slate-900"
                 } rounded ring px-2 py-0.5 flex gap-7 items-center`}
               >
-                <h1 className="text-gray-200">{msg.text}</h1>
-                <p className="text-gray-400 text-[10px]">
+                <div> 
+                   <h1 className="text-gray-200">{msg.text}</h1>
+                <p className={`inline-block text-[11px] px-[8px] py-[3px] rounded-md bg-blue-700 text-white `}>{`${msg?.sentiment!=undefined && msg.sentiment}`}</p>
+                 
+                  </div>
+               
+                 <p className="text-gray-400 text-[10px]">
                   {new Date(msg.createdAt).toLocaleString("en-IN", {
                     timeZone: "Asia/Kolkata",
                     hour12: true,
